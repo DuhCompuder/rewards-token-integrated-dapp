@@ -1,0 +1,8 @@
+{
+  "name": "fullstack-connected-dapps",
+  "version": "1.0.0",
+  "description": "an interconnected dapp ecosystem",
+  "main": "index.js",
+  "author": "ducompuder",
+  "license": "MIT"
+}

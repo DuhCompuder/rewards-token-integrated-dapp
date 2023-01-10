@@ -1,50 +1,37 @@
 // SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.4;
+pragma solidity ^0.8.13;
+import "./interfaces/IGameToken.sol";
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./TestToken.sol";
-
-contract TokenFarm {
-    // userAddress => stakingBalance
+abstract contract YieldStaker {
     mapping(address => uint256) public stakingBalance;
-    // userAddress => isStaking boolean
     mapping(address => bool) public isStaking;
-    // userAddress => timeStamp
     mapping(address => uint256) public startTime;
-    // userAddress => tokenBalance
     mapping(address => uint256) public tokenBalance;
 
-    string public name = "TokenFarm";
-
-    IERC20 public daiToken;
-    TestToken public testToken;
+    IGameToken public gameToken;
 
     event Stake(address indexed from, uint256 amount);
     event Unstake(address indexed from, uint256 amount);
     event YieldWithdraw(address indexed to, uint256 amount);
 
-    constructor(IERC20 _daiToken, TestToken _testToken) {
-        daiToken = _daiToken;
-        testToken = _testToken;
+    constructor(IGameToken _gameToken) {
+        gameToken = _gameToken;
     }
 
-    //CORE FUNCTIONS
-    function stake(uint256 amount) public {
-        require(
-            amount > 0 && daiToken.balanceOf(msg.sender) >= amount,
-            "You cannot stake zero tokens"
-        );
+    receive() external payable;
+
+    function stake() public payable {
+        require(msg.value > 0, "You cannot stake zero tokens");
 
         if (isStaking[msg.sender] == true) {
             uint256 toTransfer = calculateYieldTotal(msg.sender);
             tokenBalance[msg.sender] += toTransfer;
         }
 
-        daiToken.transferFrom(msg.sender, address(this), amount);
-        stakingBalance[msg.sender] += amount;
+        stakingBalance[msg.sender] += msg.value;
         startTime[msg.sender] = block.timestamp;
         isStaking[msg.sender] = true;
-        emit Stake(msg.sender, amount);
+        emit Stake(msg.sender, msg.value);
     }
 
     function unstake(uint256 amount) public {
@@ -59,7 +46,9 @@ contract TokenFarm {
         uint256 balanceTransfer = amount;
         amount = 0;
         stakingBalance[msg.sender] -= balanceTransfer;
-        daiToken.transfer(msg.sender, balanceTransfer);
+        (bool sent, ) = msg.sender.call{value: balanceTransfer}("");
+        require(sent);
+
         tokenBalance[msg.sender] += yieldTransfer;
         if (stakingBalance[msg.sender] == 0) {
             isStaking[msg.sender] = false;
@@ -82,7 +71,8 @@ contract TokenFarm {
         }
 
         startTime[msg.sender] = block.timestamp;
-        testToken.mint(msg.sender, toTransfer);
+        gameToken.claimRewards(msg.sender, toTransfer);
+
         emit YieldWithdraw(msg.sender, toTransfer);
     }
 
@@ -94,7 +84,7 @@ contract TokenFarm {
 
     function calculateYieldTotal(address user) public view returns (uint256) {
         uint256 time = calculateYieldTime(user) * 10**18;
-        uint256 rate = 86400;
+        uint256 rate = 1 days;
         uint256 timeRate = time / rate;
         uint256 rawYield = (stakingBalance[user] * timeRate) / 10**18;
         return rawYield;

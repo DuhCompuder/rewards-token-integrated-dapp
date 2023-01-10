@@ -94,13 +94,13 @@ contract RockPaperScissors {
                     gamesPlayed,
                     "Rock smashes scissors! PlayerA win!"
                 );
-                playerWins[game.PlayerA] += 1;
+                playerWins[game.playerA] += 1;
             } else {
                 emit AnnounceResult(
                     gamesPlayed,
                     "Paper covers rock! PlayerB wins."
                 );
-                playerWins[game.PlayerB] += 1;
+                playerWins[game.playerB] += 1;
             }
         } else if (game.playerASelection == Options.PAPER) {
             if (game.playerBSelection == Options.ROCK) {
@@ -108,13 +108,13 @@ contract RockPaperScissors {
                     gamesPlayed,
                     "Paper covers rock! PlayerA win!"
                 );
-                playerWins[game.PlayerA] += 1;
+                playerWins[game.playerA] += 1;
             } else {
                 emit AnnounceResult(
                     gamesPlayed,
                     "Scissors cuts paper! PlayerB wins."
                 );
-                playerWins[game.PlayerB] += 1;
+                playerWins[game.playerB] += 1;
             }
         } else if (game.playerASelection == Options.SCISSORS) {
             if (game.playerBSelection == Options.PAPER) {
@@ -122,13 +122,13 @@ contract RockPaperScissors {
                     gamesPlayed,
                     "Scissors cuts paper! PlayerA wins!"
                 );
-                playerWins[game.PlayerA] += 1;
+                playerWins[game.playerA] += 1;
             } else {
                 emit AnnounceResult(
                     gamesPlayed,
                     "Rock smashes scissors! PlayerB wins."
                 );
-                playerWins[game.PlayerB] += 1;
+                playerWins[game.playerB] += 1;
             }
         }
     }

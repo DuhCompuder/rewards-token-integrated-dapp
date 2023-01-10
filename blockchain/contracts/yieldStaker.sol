@@ -18,7 +18,7 @@ abstract contract YieldStaker {
         gameToken = _gameToken;
     }
 
-    receive() external payable;
+    receive() external payable {}
 
     function stake() public payable {
         require(msg.value > 0, "You cannot stake zero tokens");

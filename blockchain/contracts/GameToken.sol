@@ -1,19 +1,11 @@
-// SPDX-License-Identifier: Unlicensed
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "./interfaces/IGameToken.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract GameToken is
-    Initializable,
-    ERC20Upgradeable,
-    ERC20BurnableUpgradeable,
-    OwnableUpgradeable,
-    IGameToken
-{
+contract GameToken is ERC20, ERC20Burnable, Ownable {
     mapping(address => bool) private _whitelist;
 
     modifier accessApproved() {
@@ -21,22 +13,14 @@ abstract contract GameToken is
         _;
     }
 
-    constructor() {
-        _disableInitializers();
-    }
+    constructor() ERC20("GameToken", "GMTN") {}
 
-    function initialize() public initializer {
-        __ERC20_init("GameToken", "GMTN");
-        __ERC20Burnable_init();
-        __Ownable_init();
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
     }
 
     function giveApproval(address toApprove) public onlyOwner {
         _whitelist[toApprove] = true;
-    }
-
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
     }
 
     function claimAward(address to, uint256 amount) internal accessApproved {

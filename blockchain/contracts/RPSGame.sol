@@ -3,8 +3,7 @@ pragma solidity ^0.8.13;
 import "./interfaces/IGameToken.sol";
 
 contract RockPaperScissors {
-    IGameToken _token;
-
+    IGameToken public token;
     struct GameInfo {
         address playerA;
         Options playerASelection;
@@ -19,22 +18,28 @@ contract RockPaperScissors {
     }
 
     uint256 public gamesPlayed;
+    string public name = "Game Of Rock Paper Scissors";
     mapping(uint256 => GameInfo) private _pastGames;
     mapping(address => uint256) public playerWins;
     mapping(address => uint256) public claimedWins;
 
     event AnnounceResult(uint256 gameNumber, string result);
+    event PlayerSelection(
+        uint256 gameNumber,
+        string player,
+        address playerAddress,
+        Options playerSelection,
+        string playerSelectionReadable
+    );
 
-    constructor(IGameToken token) {
+    constructor(IGameToken _token) {
         gamesPlayed = 0;
-        _token = token;
+        token = _token;
     }
 
     function playWithComputer(Options selected) public returns (string memory) {
         uint256 rand = random(2);
         Options computerSelected = mapSelectionToEnum(rand);
-
-        address test = address(this);
 
         GameInfo memory newGame = GameInfo(
             address(this),
@@ -53,13 +58,13 @@ contract RockPaperScissors {
         if (_pastGames[gamesPlayed].playerA == address(0x0)) {
             _pastGames[gamesPlayed].playerA = msg.sender;
             _pastGames[gamesPlayed].playerASelection = selected;
-            // emit PlayerSelections(
-            //     gamesPlayed,
-            //     "PlayerA",
-            //     msg.sender,
-            //     selected,
-            //     mapSelectionToString(selected)
-            // );
+            emit PlayerSelection(
+                gamesPlayed,
+                "PlayerA",
+                msg.sender,
+                selected,
+                mapSelectionToString(selected)
+            );
         } else {
             require(
                 _pastGames[gamesPlayed].playerA != msg.sender,
@@ -67,13 +72,13 @@ contract RockPaperScissors {
             );
             _pastGames[gamesPlayed].playerB = msg.sender;
             _pastGames[gamesPlayed].playerBSelection = selected;
-            // emit PlayerSelections(
-            //     gamesPlayed,
-            //     "PlayerB",
-            //     msg.sender,
-            //     selected,
-            //     mapSelectionToString(selected)
-            // );
+            emit PlayerSelection(
+                gamesPlayed,
+                "PlayerB",
+                msg.sender,
+                selected,
+                mapSelectionToString(selected)
+            );
             determineWinner(_pastGames[gamesPlayed]);
         }
     }
@@ -139,7 +144,7 @@ contract RockPaperScissors {
             claimedWins[msg.sender];
         claimedWins[msg.sender] += claimMultiplier;
         uint256 claimAmount = claimMultiplier * 1000;
-        _token.claimRewards(msg.sender, claimAmount);
+        token.claimRewards(msg.sender, claimAmount);
     }
 
     function mapSelectionToEnum(uint256 selected)

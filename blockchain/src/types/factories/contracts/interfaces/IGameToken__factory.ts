@@ -24,13 +24,7 @@ const _abi = [
       },
     ],
     name: "claimRewards",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

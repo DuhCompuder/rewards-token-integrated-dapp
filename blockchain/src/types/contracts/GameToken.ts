@@ -35,7 +35,7 @@ export interface GameTokenInterface extends utils.Interface {
     "burn(uint256)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
     "checkWhitelist(address)": FunctionFragment;
-    "claimAward(address,uint256)": FunctionFragment;
+    "claimRewards(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "giveApproval(address)": FunctionFragment;
@@ -60,7 +60,7 @@ export interface GameTokenInterface extends utils.Interface {
       | "burn"
       | "burnFrom"
       | "checkWhitelist"
-      | "claimAward"
+      | "claimRewards"
       | "decimals"
       | "decreaseAllowance"
       | "giveApproval"
@@ -102,7 +102,7 @@ export interface GameTokenInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "claimAward",
+    functionFragment: "claimRewards",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
@@ -163,7 +163,10 @@ export interface GameTokenInterface extends utils.Interface {
     functionFragment: "checkWhitelist",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "claimAward", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "claimRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
@@ -310,7 +313,7 @@ export interface GameToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    claimAward(
+    claimRewards(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -410,7 +413,7 @@ export interface GameToken extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  claimAward(
+  claimRewards(
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -510,7 +513,7 @@ export interface GameToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    claimAward(
+    claimRewards(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -642,7 +645,7 @@ export interface GameToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    claimAward(
+    claimRewards(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -743,7 +746,7 @@ export interface GameToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    claimAward(
+    claimRewards(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

@@ -88,7 +88,7 @@ export interface IGameToken extends BaseContract {
       claimer: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
   filters: {};

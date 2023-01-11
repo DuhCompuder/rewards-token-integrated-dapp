@@ -496,7 +496,7 @@ export interface GameTokenUpgradeable extends BaseContract {
       claimer: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 

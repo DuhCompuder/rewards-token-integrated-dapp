@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 import "./interfaces/IGameToken.sol";
 
-abstract contract YieldStaker {
+contract YieldStaker {
     mapping(address => uint256) public stakingBalance;
     mapping(address => bool) public isStaking;
     mapping(address => uint256) public startTime;

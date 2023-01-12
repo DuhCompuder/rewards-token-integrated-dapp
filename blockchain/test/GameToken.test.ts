@@ -59,12 +59,12 @@ describe("ERC20 Game Token", () => {
   describe("Rewards", () => {
     it("should fail if awarder is not in white list", async () => {
       await expect(
-        token.claimAward(addrOne.getAddress(), BigNumber.from(1000))
+        token.claimRewards(addrOne.getAddress(), BigNumber.from(1000))
       ).to.be.revertedWith("Accessor is not on approved whitelist");
     });
     it("should award correctly", async () => {
       await token.giveApproval(addrOne.getAddress());
-      await token.claimAward(addrOne.getAddress(), BigNumber.from(3000));
+      await token.claimRewards(addrOne.getAddress(), BigNumber.from(3000));
       expect(await token.balanceOf(addrOne.getAddress())).to.eq(3000);
     });
     it("should remove rewarder access correctly", async () => {
@@ -75,7 +75,7 @@ describe("ERC20 Game Token", () => {
       assert.equal(isApproved, true);
       await token.removeApproval(addrOne.getAddress());
       await expect(
-        token.claimAward(addrOne.getAddress(), BigNumber.from(1000))
+        token.claimRewards(addrOne.getAddress(), BigNumber.from(1000))
       ).to.be.revertedWith("Accessor is not on approved whitelist");
     });
     it("should fail removing rewarder access if rewarder was not already approved", async () => {

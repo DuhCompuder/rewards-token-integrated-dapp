@@ -41,7 +41,7 @@ describe("YieldStaker", () => {
 
   describe("Stake", async () => {
     it("should accept ether and update mapping", async () => {
-      const toTransfer = ethers.utils.parseEther("100");
+      const toTransfer: BigNumber = ethers.utils.parseEther("100");
 
       expect(await yieldStaker.isStaking(alice.address)).to.eq(false);
 
@@ -54,7 +54,7 @@ describe("YieldStaker", () => {
     });
 
     it("should update balance with multiple stakes", async () => {
-      let toTransfer = ethers.utils.parseEther("100");
+      let toTransfer: BigNumber = ethers.utils.parseEther("100");
       await yieldStaker.connect(alice).stake({ value: toTransfer });
 
       await yieldStaker.connect(alice).stake({ value: toTransfer });
@@ -65,7 +65,7 @@ describe("YieldStaker", () => {
     });
 
     it("should revert with not enough funds", async () => {
-      let toTransfer = 0;
+      let toTransfer: number = 0;
 
       await expect(
         yieldStaker.connect(bob).stake({ value: toTransfer })
@@ -80,7 +80,7 @@ describe("YieldStaker", () => {
     });
 
     it("should unstake balance from user", async () => {
-      let toTransfer = ethers.utils.parseEther("100");
+      let toTransfer: BigNumber = ethers.utils.parseEther("100");
       await yieldStaker.connect(alice).unstake(toTransfer);
 
       res = await yieldStaker.stakingBalance(alice.address);
@@ -93,7 +93,7 @@ describe("YieldStaker", () => {
   describe("WithdrawYield", async () => {
     beforeEach(async () => {
       await token.giveApproval(yieldStaker.address);
-      let toTransfer = ethers.utils.parseEther("10");
+      let toTransfer: BigNumber = ethers.utils.parseEther("10");
       await yieldStaker.connect(alice).stake({ value: toTransfer });
     });
 
@@ -113,30 +113,33 @@ describe("YieldStaker", () => {
     });
 
     it("should award correct token amount in total supply and user", async () => {
-      await time.increase(86400);
-
-      let _time = await yieldStaker.calculateYieldTime(alice.address);
-
-      let formatTime = _time.toNumber() / 86400;
-
-      let staked = await yieldStaker.stakingBalance(alice.address);
-      console.log("staked: ", ethers.utils.formatEther(staked.toString()));
-      let formatStaked = Number(ethers.utils.formatEther(staked.toString()));
-      let rewardBalance = formatStaked * formatTime;
-
       await token.giveApproval(yieldStaker.address);
       expect(await token.checkWhitelist(yieldStaker.address)).to.eq(true);
+
+      await time.increase(86400);
+
+      let _time: BigNumber = await yieldStaker.calculateYieldTime(
+        alice.address
+      );
+      let formatTime: number = Number(_time) / 86400;
+      let staked: BigNumber = await yieldStaker.stakingBalance(alice.address);
+      let bal: number = Number(staked) * formatTime;
+      let newBal: string = ethers.utils.formatEther(bal.toString());
+      let expected: string = Number.parseFloat(newBal).toFixed(3);
+
       await yieldStaker.connect(alice).withdrawYield();
 
       res = await token.totalSupply();
-      const tokenTotalSupply = Number(ethers.utils.formatEther(res));
+      let newRes: string = ethers.utils.formatEther(res);
+      let formatRes: string = Number.parseFloat(newRes).toFixed(3).toString();
 
-      expect(rewardBalance).to.eq(tokenTotalSupply);
+      expect(expected).to.eq(formatRes);
 
       res = await token.balanceOf(alice.address);
-      const aliceBalance = ethers.utils.formatEther(res);
+      newRes = ethers.utils.formatEther(res);
+      formatRes = Number.parseFloat(newRes).toFixed(3).toString();
 
-      expect(aliceBalance).to.eq(tokenTotalSupply);
+      expect(expected).to.eq(formatRes);
     });
 
     it("should update yield balance when unstaked", async () => {

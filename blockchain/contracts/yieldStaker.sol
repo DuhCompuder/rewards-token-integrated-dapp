@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.13;
 import "./interfaces/IGameToken.sol";
+import "hardhat/console.sol";
 
 contract YieldStaker {
+    uint256 public constant RATE_1DAY = 86400;
     mapping(address => uint256) public stakingBalance;
     mapping(address => bool) public isStaking;
     mapping(address => uint256) public startTime;
@@ -84,9 +86,10 @@ contract YieldStaker {
 
     function calculateYieldTotal(address user) public view returns (uint256) {
         uint256 time = calculateYieldTime(user) * 10**18;
-        uint256 rate = 1 days;
+        uint256 rate = RATE_1DAY;
         uint256 timeRate = time / rate;
         uint256 rawYield = (stakingBalance[user] * timeRate) / 10**18;
+        console.log("Transferring raw %s tokens", rawYield);
         return rawYield;
     }
 }

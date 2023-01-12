@@ -30,6 +30,7 @@ import type {
 
 export interface YieldStakerInterface extends utils.Interface {
   functions: {
+    "RATE_1DAY()": FunctionFragment;
     "calculateYieldTime(address)": FunctionFragment;
     "calculateYieldTotal(address)": FunctionFragment;
     "gameToken()": FunctionFragment;
@@ -44,6 +45,7 @@ export interface YieldStakerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "RATE_1DAY"
       | "calculateYieldTime"
       | "calculateYieldTotal"
       | "gameToken"
@@ -56,6 +58,7 @@ export interface YieldStakerInterface extends utils.Interface {
       | "withdrawYield"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "RATE_1DAY", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "calculateYieldTime",
     values: [PromiseOrValue<string>]
@@ -91,6 +94,7 @@ export interface YieldStakerInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(functionFragment: "RATE_1DAY", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calculateYieldTime",
     data: BytesLike
@@ -182,6 +186,8 @@ export interface YieldStaker extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    RATE_1DAY(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     calculateYieldTime(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -227,6 +233,8 @@ export interface YieldStaker extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  RATE_1DAY(overrides?: CallOverrides): Promise<BigNumber>;
 
   calculateYieldTime(
     user: PromiseOrValue<string>,
@@ -274,6 +282,8 @@ export interface YieldStaker extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    RATE_1DAY(overrides?: CallOverrides): Promise<BigNumber>;
+
     calculateYieldTime(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -346,6 +356,8 @@ export interface YieldStaker extends BaseContract {
   };
 
   estimateGas: {
+    RATE_1DAY(overrides?: CallOverrides): Promise<BigNumber>;
+
     calculateYieldTime(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -393,6 +405,8 @@ export interface YieldStaker extends BaseContract {
   };
 
   populateTransaction: {
+    RATE_1DAY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     calculateYieldTime(
       user: PromiseOrValue<string>,
       overrides?: CallOverrides

@@ -5,10 +5,17 @@ import "./interfaces/IGameToken.sol";
 contract RockPaperScissors {
     IGameToken public token;
     struct GameInfo {
+        uint256 gameId;
         address playerA;
         Options playerASelection;
         address playerB;
         Options playerBSelection;
+    }
+
+    enum Result {
+        PlayerAWins,
+        PlayerBWins,
+        Tie
     }
 
     enum Options {
@@ -17,11 +24,21 @@ contract RockPaperScissors {
         SCISSORS
     }
 
+    modifier claimableWins() {
+        require(
+            claimedWins[msg.sender] < playerWins[msg.sender],
+            "There are no wins left to claim"
+        );
+        _;
+    }
+
     uint256 public gamesPlayed;
     string public name = "Game Of Rock Paper Scissors";
+
     mapping(uint256 => GameInfo) private _pastGames;
     mapping(address => uint256) public playerWins;
     mapping(address => uint256) public claimedWins;
+    mapping(uint256 => Result) public pastGameResults;
 
     event AnnounceResult(uint256 gameNumber, string result);
     event PlayerSelection(
@@ -37,11 +54,24 @@ contract RockPaperScissors {
         token = _token;
     }
 
-    function playWithComputer(Options selected) public returns (string memory) {
+    function playWithComputer(Options selected) public payable {
+        require(
+            msg.value > 5000000 gwei,
+            "Not enough ether to pay for a play with the computer"
+        ); //0.005 eth
+        //moves and save existing player selction to the next game
+        if (_pastGames[gamesPlayed].playerA != address(0x0)) {
+            address existingPlayer = _pastGames[gamesPlayed].playerA;
+            Options exitstingSelection = _pastGames[gamesPlayed]
+                .playerASelection;
+            _pastGames[gamesPlayed + 1].playerA = existingPlayer;
+            _pastGames[gamesPlayed + 1].playerASelection = exitstingSelection;
+        }
         uint256 rand = random(2);
         Options computerSelected = mapSelectionToEnum(rand);
 
         GameInfo memory newGame = GameInfo(
+            gamesPlayed,
             address(this),
             computerSelected,
             msg.sender,
@@ -54,7 +84,7 @@ contract RockPaperScissors {
         gamesPlayed += 1;
     }
 
-    function playWithAPlayer(Options selected) public returns (string memory) {
+    function playWithAPlayer(Options selected) public {
         if (_pastGames[gamesPlayed].playerA == address(0x0)) {
             _pastGames[gamesPlayed].playerA = msg.sender;
             _pastGames[gamesPlayed].playerASelection = selected;
@@ -80,6 +110,7 @@ contract RockPaperScissors {
                 mapSelectionToString(selected)
             );
             determineWinner(_pastGames[gamesPlayed]);
+            gamesPlayed += 1;
         }
     }
 
@@ -93,6 +124,7 @@ contract RockPaperScissors {
                     ". It's a tie!"
                 )
             );
+            pastGameResults[gamesPlayed] = Result.Tie;
         } else if (game.playerASelection == Options.ROCK) {
             if (game.playerBSelection == Options.SCISSORS) {
                 emit AnnounceResult(
@@ -100,12 +132,14 @@ contract RockPaperScissors {
                     "Rock smashes scissors! PlayerA win!"
                 );
                 playerWins[game.playerA] += 1;
+                pastGameResults[gamesPlayed] = Result.PlayerAWins;
             } else {
                 emit AnnounceResult(
                     gamesPlayed,
                     "Paper covers rock! PlayerB wins."
                 );
                 playerWins[game.playerB] += 1;
+                pastGameResults[gamesPlayed] = Result.PlayerBWins;
             }
         } else if (game.playerASelection == Options.PAPER) {
             if (game.playerBSelection == Options.ROCK) {
@@ -114,12 +148,14 @@ contract RockPaperScissors {
                     "Paper covers rock! PlayerA win!"
                 );
                 playerWins[game.playerA] += 1;
+                pastGameResults[gamesPlayed] = Result.PlayerAWins;
             } else {
                 emit AnnounceResult(
                     gamesPlayed,
                     "Scissors cuts paper! PlayerB wins."
                 );
                 playerWins[game.playerB] += 1;
+                pastGameResults[gamesPlayed] = Result.PlayerBWins;
             }
         } else if (game.playerASelection == Options.SCISSORS) {
             if (game.playerBSelection == Options.PAPER) {
@@ -128,23 +164,31 @@ contract RockPaperScissors {
                     "Scissors cuts paper! PlayerA wins!"
                 );
                 playerWins[game.playerA] += 1;
+                pastGameResults[gamesPlayed] = Result.PlayerAWins;
             } else {
                 emit AnnounceResult(
                     gamesPlayed,
                     "Rock smashes scissors! PlayerB wins."
                 );
                 playerWins[game.playerB] += 1;
+                pastGameResults[gamesPlayed] = Result.PlayerBWins;
             }
         }
     }
 
-    function claimWins() public {
-        require(claimedWins[msg.sender] < playerWins[msg.sender]);
+    function claimWins() public claimableWins {
         uint256 claimMultiplier = playerWins[msg.sender] -
             claimedWins[msg.sender];
         claimedWins[msg.sender] += claimMultiplier;
         uint256 claimAmount = claimMultiplier * 1000;
         token.claimRewards(msg.sender, claimAmount);
+    }
+
+    function checkWinnings() public view claimableWins returns (uint256) {
+        uint256 claimMultiplier = playerWins[msg.sender] -
+            claimedWins[msg.sender];
+        uint256 claimAmount = claimMultiplier * 1000;
+        return claimAmount;
     }
 
     function mapSelectionToEnum(uint256 selected)

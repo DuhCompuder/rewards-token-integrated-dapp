@@ -33,6 +33,10 @@ describe("Rock Paper Scissors Game", () => {
     [userPlayerOne, userPlayerTwo] = await ethers.getSigners();
   });
   describe("Deployment", () => {
+    it("Initializes", async () => {
+      expect(token).to.be.ok;
+      expect(gameRPS).to.be.ok;
+    });
     it("Retrieved descriptive name of contract", async () => {
       const name: String = await gameRPS.name();
       expect(name).to.be.eq("Game Of Rock Paper Scissors");
@@ -42,9 +46,22 @@ describe("Rock Paper Scissors Game", () => {
       expect(tokenAddr).to.be.eq(gameTokenAddress);
     });
   });
-
-  //   it("Correct baseURI passed to contract constructor", async () => {
-  //     const contractURI: string = await gameRPS.getBaseURI();
-  //     expect(contractURI).to.be.eq(baseURI);
-  //   });
+  describe("Play with a computer", () => {
+    it("Initializes", async () => {
+      expect(token).to.be.ok;
+      expect(gameRPS).to.be.ok;
+    });
+  });
+  describe("Play with another player", () => {
+    it("Initializes", async () => {
+      expect(token).to.be.ok;
+      expect(gameRPS).to.be.ok;
+    });
+  });
+  describe("Claim winnnings", () => {
+    it("Initializes", async () => {
+      expect(token).to.be.ok;
+      expect(gameRPS).to.be.ok;
+    });
+  });
 });

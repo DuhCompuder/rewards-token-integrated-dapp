@@ -67,8 +67,23 @@ contract RockPaperScissors {
             _pastGames[gamesPlayed + 1].playerA = existingPlayer;
             _pastGames[gamesPlayed + 1].playerASelection = exitstingSelection;
         }
+        emit PlayerSelection(
+            gamesPlayed,
+            "PlayerA",
+            msg.sender,
+            selected,
+            mapSelectionToString(selected)
+        );
         uint256 rand = random(2);
         Options computerSelected = mapSelectionToEnum(rand);
+
+        emit PlayerSelection(
+            gamesPlayed,
+            "PlayerB: Computer",
+            address(this),
+            computerSelected,
+            mapSelectionToString(computerSelected)
+        );
 
         GameInfo memory newGame = GameInfo(
             gamesPlayed,

@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -29,10 +30,12 @@ import type {
 
 export interface RockPaperScissorsInterface extends utils.Interface {
   functions: {
+    "checkWinnings()": FunctionFragment;
     "claimWins()": FunctionFragment;
     "claimedWins(address)": FunctionFragment;
     "gamesPlayed()": FunctionFragment;
     "name()": FunctionFragment;
+    "pastGameResults(uint256)": FunctionFragment;
     "playWithAPlayer(uint8)": FunctionFragment;
     "playWithComputer(uint8)": FunctionFragment;
     "playerWins(address)": FunctionFragment;
@@ -41,16 +44,22 @@ export interface RockPaperScissorsInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "checkWinnings"
       | "claimWins"
       | "claimedWins"
       | "gamesPlayed"
       | "name"
+      | "pastGameResults"
       | "playWithAPlayer"
       | "playWithComputer"
       | "playerWins"
       | "token"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "checkWinnings",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "claimWins", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "claimedWins",
@@ -61,6 +70,10 @@ export interface RockPaperScissorsInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "pastGameResults",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "playWithAPlayer",
     values: [PromiseOrValue<BigNumberish>]
@@ -75,6 +88,10 @@ export interface RockPaperScissorsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "checkWinnings",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claimWins", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimedWins",
@@ -85,6 +102,10 @@ export interface RockPaperScissorsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pastGameResults",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "playWithAPlayer",
     data: BytesLike
@@ -157,6 +178,8 @@ export interface RockPaperScissors extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    checkWinnings(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     claimWins(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -170,6 +193,11 @@ export interface RockPaperScissors extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
+    pastGameResults(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
     playWithAPlayer(
       selected: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -177,7 +205,7 @@ export interface RockPaperScissors extends BaseContract {
 
     playWithComputer(
       selected: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     playerWins(
@@ -187,6 +215,8 @@ export interface RockPaperScissors extends BaseContract {
 
     token(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  checkWinnings(overrides?: CallOverrides): Promise<BigNumber>;
 
   claimWins(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -201,6 +231,11 @@ export interface RockPaperScissors extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
+  pastGameResults(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
   playWithAPlayer(
     selected: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -208,7 +243,7 @@ export interface RockPaperScissors extends BaseContract {
 
   playWithComputer(
     selected: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   playerWins(
@@ -219,6 +254,8 @@ export interface RockPaperScissors extends BaseContract {
   token(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    checkWinnings(overrides?: CallOverrides): Promise<BigNumber>;
+
     claimWins(overrides?: CallOverrides): Promise<void>;
 
     claimedWins(
@@ -230,15 +267,20 @@ export interface RockPaperScissors extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    pastGameResults(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     playWithAPlayer(
       selected: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
 
     playWithComputer(
       selected: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
 
     playerWins(
       arg0: PromiseOrValue<string>,
@@ -272,6 +314,8 @@ export interface RockPaperScissors extends BaseContract {
   };
 
   estimateGas: {
+    checkWinnings(overrides?: CallOverrides): Promise<BigNumber>;
+
     claimWins(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -285,6 +329,11 @@ export interface RockPaperScissors extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
+    pastGameResults(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     playWithAPlayer(
       selected: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -292,7 +341,7 @@ export interface RockPaperScissors extends BaseContract {
 
     playWithComputer(
       selected: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     playerWins(
@@ -304,6 +353,8 @@ export interface RockPaperScissors extends BaseContract {
   };
 
   populateTransaction: {
+    checkWinnings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     claimWins(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -317,6 +368,11 @@ export interface RockPaperScissors extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    pastGameResults(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     playWithAPlayer(
       selected: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -324,7 +380,7 @@ export interface RockPaperScissors extends BaseContract {
 
     playWithComputer(
       selected: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     playerWins(

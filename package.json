@@ -6,6 +6,10 @@
   "author": "ducompuder",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "chain:test": "yarn workspace blockchain test",
+    "chain:local-node": "yarn workspace blockchain local-chain"
+  },
   "workspaces": [
     "blockchain",
     "server",

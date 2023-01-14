@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "ducompuder",
   "license": "MIT",
+  "scripts": {
+    "test": "npx hardhat test",
+    "local-chain": "npx hardhat node"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@openzeppelin/contracts": "^4.8.0",

@@ -4,6 +4,8 @@ An experimental ecosystem of dapps integrated with a token economics
 
 Try running some of the following tasks:
 
+Smart Contract Tests
+
 ```shell
-yarn run
+yarn chain:test
 ```

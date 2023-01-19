@@ -9,3 +9,6 @@ Smart Contract Tests
 ```shell
 yarn chain:test
 ```
+
+Need to dos:
+create frontend

@@ -7,7 +7,11 @@
   "license": "MIT",
   "scripts": {
     "test": "npx hardhat test",
-    "local-chain": "npx hardhat node"
+    "local-chain": "npx hardhat node",
+    "deploy-token": "npx hardhat run scripts/1.deployGameToken.ts",
+    "deploy-rps": "npx hardhat run scripts/2.deployRPSGame.ts",
+    "deploy-staker": "npx hardhat run scripts/3.deployStaker.ts",
+    "deploy-all": "yarn deploy-token deploy-rps deploy-staker"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",

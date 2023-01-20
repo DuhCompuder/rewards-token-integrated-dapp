@@ -1,5 +1,7 @@
 import fs from "fs";
 import { FormatedDeploymentInfo } from "../src/deployment/deploymentTypes";
+import clc from "cli-color";
+
 export async function writeDeploymentInfo(
   deploymentFormat: FormatedDeploymentInfo
 ) {
@@ -10,10 +12,12 @@ export async function writeDeploymentInfo(
       (err) => {
         err
           ? console.error(err)
-          : console.log(`Write OperatingDeploymentInfo.json Succeeded.`);
+          : console.log(
+              clc.green(`Write OperatingDeploymentInfo.json Succeeded.`)
+            );
       }
     );
   } catch {
-    console.error("Write OperatingDeploymentInfo.json file failed.");
+    console.error(clc.red("Write OperatingDeploymentInfo.json file failed."));
   }
 }

@@ -11,18 +11,20 @@
     "deploy-token:dev": "npx hardhat run scripts/deploy/1.deployGameToken.ts --network localhost",
     "deploy-rps:dev": "npx hardhat run scripts/deploy/2.deployRPSGame.ts --network localhost",
     "deploy-staker:dev": "npx hardhat run scripts/deploy/3.deployStaker.ts --network localhost",
-    "deploy-all:dev": "yarn deploy-token:dev deploy-rps:dev deploy-staker:dev --network localhost",
+    "deploy-all:dev": "yarn deploy-token:dev && yarn deploy-rps:dev && yarn deploy-staker:dev",
     "deploy-token": "npx hardhat run scripts/deploy/1.deployGameToken.ts",
     "deploy-rps": "npx hardhat run scripts/deploy/2.deployRPSGame.ts",
     "deploy-staker": "npx hardhat run scripts/deploy/3.deployStaker.ts",
-    "deploy-all": "yarn deploy-token deploy-rps deploy-staker"
+    "deploy-all": "yarn deploy-token && yarn deploy-rps && yarn deploy-staker"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@openzeppelin/contracts": "^4.8.0",
     "@openzeppelin/contracts-upgradeable": "^4.8.0",
     "@typechain/hardhat": "^6.1.5",
+    "@types/cli-color": "^2.0.2",
     "@types/mocha": "^10.0.1",
+    "cli-color": "^2.0.3",
     "hardhat": "^2.12.5",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",

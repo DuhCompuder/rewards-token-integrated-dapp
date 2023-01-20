@@ -21,6 +21,6 @@ yarn chain:deploy-all:dev
 
 Need todos:
 
-1. Contract Deployment Info cross workspace management
-2. Frontend
+1. Contract Deployment Info cross workspace management (complete)
+2. Frontend (inprogress)
 3. Upgradeable voting DAO?

@@ -6,6 +6,7 @@ import {
 import { YieldStaker, YieldStaker__factory } from "../../src/types";
 import { abi } from "../../artifacts/contracts/RPSGame.sol/RockPaperScissors.json";
 import { writeDeploymentInfo } from "../writeToDeploymentFile";
+import clc from "cli-color";
 
 async function main() {
   const existingFile:
@@ -43,8 +44,18 @@ async function main() {
     contractAddress: yieldStaker.address,
   };
 
-  existingFile.rpsGame[network] = deploymentInfo;
-  await writeDeploymentInfo(existingFile);
+  const formatDeploymentInfo: FormatedDeploymentInfo = {
+    ...existingFile,
+    yieldStaker: {
+      [network]: deploymentInfo,
+    },
+  };
+  console.log(
+    clc.green(
+      `Saving deployment info for YieldStaker contract on network: ${network}...`
+    )
+  );
+  await writeDeploymentInfo(formatDeploymentInfo);
 }
 
 main().catch((error) => {

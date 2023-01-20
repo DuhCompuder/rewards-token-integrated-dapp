@@ -5,7 +5,7 @@ import {
 } from "../../src/deployment/deploymentTypes";
 import { GameToken__factory, GameToken } from "../../src/types";
 import { abi } from "../../artifacts/contracts/GameToken.sol/GameToken.json";
-import fs from "fs";
+import { writeDeploymentInfo } from "../writeToDeploymentFile";
 
 async function main() {
   const GameToken: GameToken__factory = await ethers.getContractFactory(
@@ -30,18 +30,14 @@ async function main() {
   };
 
   //Check if file exist. create one if not, otherwise copy from file and modify it.
-  try {
-    fs.writeFile(
-      `./src/deployment/OperatingDeploymentInfo.json`,
-      JSON.stringify(formatDeploymentInfo),
-      (err) => {
-        err
-          ? console.error(err)
-          : console.log(`Write OperatingDeploymentInfo.json Succeeded.`);
-      }
-    );
-  } catch {
-    console.error("Write OperatingDeploymentInfo.json file failed.");
+  const existingFile:
+    | FormatedDeploymentInfo
+    | undefined = require("../../src/deployment/OperatingDeploymentInfo.json");
+  if (existingFile) {
+    existingFile.gameToken[network] = deploymentInfo;
+    await writeDeploymentInfo(existingFile);
+  } else {
+    await writeDeploymentInfo(formatDeploymentInfo);
   }
 }
 
